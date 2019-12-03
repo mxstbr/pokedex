@@ -1,0 +1,48 @@
+{
+  "name": "pokedex",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build"
+  },
+  "dependencies": {
+    "@nice-boys/components": "^0.2.1",
+    "@primer/components": "^15.1.1",
+    "pokeapi-js-wrapper": "^1.1.2",
+    "react": "^0.0.0-experimental-b53ea6ca0",
+    "react-dom": "^0.0.0-experimental-b53ea6ca0",
+    "react-scripts": "3.2.0",
+    "styled-components": "^5.0.0-rc.2"
+  },
+  "devDependencies": {
+    "husky": "^3.0.9",
+    "lint-staged": "^9.4.2",
+    "prettier": "^1.18.2"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write",
+      "git add"
+    ],
+    "*.{css,json,md,mdx}": [
+      "prettier --write",
+      "git add"
+    ]
+  }
+}
