@@ -6,7 +6,7 @@ import PokemonGamesSection from "../../components/PokemonGamesSection";
 import Column from "../../components/Column";
 import { fetchPokemonGames, fetchPokemonByName } from "../../api/pokeapi";
 
-function useAsync(fn, deps) {
+function useAsync(fn) {
   const [status, setStatus] = React.useState("idle");
   const [data, setData] = React.useState(null);
   const [error, setError] = React.useState(null);
@@ -22,19 +22,20 @@ function useAsync(fn, deps) {
         if (cancelled) return;
         setStatus("idle");
         setData(data);
+        setError(null);
       },
       err => {
         if (cancelled) return;
         setStatus("error");
         setError(err);
+        setData(null);
       }
     );
 
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line
-  }, deps);
+  }, [fn]);
 
   return {
     status,
@@ -44,13 +45,15 @@ function useAsync(fn, deps) {
 }
 
 function PokemonGames(props) {
-  const { data: games, status, error } = useAsync(
+  const callback = React.useCallback(
     () =>
       fetchPokemonGames(
         props.pokemon.game_indices.map(game => game.version.name)
       ),
     [props.pokemon]
   );
+
+  const { data: games } = useAsync(callback);
 
   return !games ? <Spinner /> : <PokemonGamesSection games={games} />;
 }
