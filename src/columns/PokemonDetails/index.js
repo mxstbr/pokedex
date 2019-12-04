@@ -6,29 +6,53 @@ import PokemonGamesSection from "../../components/PokemonGamesSection";
 import Column from "../../components/Column";
 import { fetchPokemonGames, fetchPokemonByName } from "../../api/pokeapi";
 
+function reducer(state, action) {
+  switch (action.type) {
+    case "start": {
+      return {
+        data: null,
+        error: null,
+        status: "loading"
+      };
+    }
+    case "complete": {
+      return {
+        data: action.data,
+        error: null,
+        status: "idle"
+      };
+    }
+    case "error": {
+      return {
+        data: null,
+        error: action.error,
+        status: "error"
+      };
+    }
+    default:
+      throw new Error(`Unknown action ${action.type}`);
+  }
+}
+
 function useAsync(fn) {
-  const [status, setStatus] = React.useState("idle");
-  const [data, setData] = React.useState(null);
-  const [error, setError] = React.useState(null);
+  const [state, dispatch] = React.useReducer(reducer, {
+    status: "idle",
+    data: null,
+    error: null
+  });
 
   React.useEffect(() => {
     let cancelled = false;
 
-    setData(null);
-    setError(null);
-    setStatus("loading");
+    dispatch({ type: "start" });
     fn().then(
       data => {
         if (cancelled) return;
-        setStatus("idle");
-        setData(data);
-        setError(null);
+        dispatch({ type: "complete", data });
       },
-      err => {
+      error => {
         if (cancelled) return;
-        setStatus("error");
-        setError(err);
-        setData(null);
+        dispatch({ type: "error", error });
       }
     );
 
@@ -37,11 +61,7 @@ function useAsync(fn) {
     };
   }, [fn]);
 
-  return {
-    status,
-    data,
-    error
-  };
+  return state;
 }
 
 function PokemonGames(props) {
