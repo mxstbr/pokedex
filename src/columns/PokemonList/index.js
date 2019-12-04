@@ -8,7 +8,7 @@ import SidebarTitle from "../../components/SidebarTitle";
 import { fetchPokemons } from "../../api/pokeapi";
 
 let pokemons = null;
-let error = new Error("This failed");
+let error = null;
 const promise = fetchPokemons().then(
   result => {
     pokemons = result;
