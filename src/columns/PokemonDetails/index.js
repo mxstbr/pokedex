@@ -6,90 +6,58 @@ import PokemonGamesSection from "../../components/PokemonGamesSection";
 import Column from "../../components/Column";
 import { fetchPokemonGames, fetchPokemonByName } from "../../api/pokeapi";
 
-class PokemonGames extends React.Component {
-  state = {
-    games: null
-  };
+function PokemonGames(props) {
+  const [games, setGames] = React.useState(null);
 
-  componentDidMount() {
-    this.fetchGames();
-  }
+  React.useEffect(() => {
+    let cancelled = false;
+    setGames(null);
 
-  componentDidUpdate(prevProps) {
-    if (
-      (!prevProps.pokemon && this.props.pokemon) ||
-      prevProps.pokemon.name !== this.props.pokemon.name
-    ) {
-      this.fetchGames();
-    }
-  }
-
-  fetchGames() {
-    this.setState({
-      games: null
-    });
-
-    if (!this.props.pokemon) return;
     fetchPokemonGames(
-      this.props.pokemon.game_indices.map(game => game.version.name)
-    ).then(games => {
-      this.setState({
-        games
-      });
+      props.pokemon.game_indices.map(game => game.version.name)
+    ).then(data => {
+      if (cancelled) return;
+      setGames(data);
     });
-  }
 
-  render() {
-    return !this.state.games ? (
-      <Spinner />
-    ) : (
-      <PokemonGamesSection games={this.state.games} />
-    );
-  }
+    return () => {
+      cancelled = true;
+    };
+  }, [props.pokemon.game_indices]);
+
+  return !games ? <Spinner /> : <PokemonGamesSection games={games} />;
 }
 
-class Pokemon extends React.Component {
-  state = {
-    pokemon: null
-  };
+function Pokemon(props) {
+  const [pokemon, setPokemon] = React.useState(null);
 
-  componentDidMount() {
-    this.fetchPokemon();
-  }
+  React.useEffect(() => {
+    let cancelled = false;
+    setPokemon(null);
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.name !== this.props.name) {
-      this.fetchPokemon();
-    }
-  }
-
-  fetchPokemon() {
-    this.setState({
-      pokemon: null
+    if (!props.name) return;
+    fetchPokemonByName(props.name).then(data => {
+      if (cancelled) return;
+      setPokemon(data);
     });
 
-    if (!this.props.name) return;
-    fetchPokemonByName(this.props.name).then(pokemon => {
-      this.setState({
-        pokemon
-      });
-    });
-  }
+    return () => {
+      cancelled = true;
+    };
+  }, [props.name]);
 
-  render() {
-    return (
-      <Column width={1} p={4}>
-        {!this.props.name ? null : !this.state.pokemon ? (
-          <Spinner />
-        ) : (
-          <>
-            <PokemonProfile pokemon={this.state.pokemon} />
-            <PokemonGames pokemon={this.state.pokemon} />
-          </>
-        )}
-      </Column>
-    );
-  }
+  return (
+    <Column width={1} p={4}>
+      {!props.name ? null : !pokemon ? (
+        <Spinner />
+      ) : (
+        <>
+          <PokemonProfile pokemon={pokemon} />
+          <PokemonGames pokemon={pokemon} />
+        </>
+      )}
+    </Column>
+  );
 }
 
 export default Pokemon;
