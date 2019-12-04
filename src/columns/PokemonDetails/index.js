@@ -33,7 +33,8 @@ function useAsync(fn, deps) {
     return () => {
       cancelled = true;
     };
-  }, [fn]);
+    // eslint-disable-next-line
+  }, deps);
 
   return {
     status,
