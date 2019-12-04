@@ -8934,6 +8934,11 @@ react-dom@^0.0.0-experimental-b53ea6ca0:
     prop-types "^15.6.2"
     scheduler "0.0.0-experimental-b53ea6ca0"
 
+react-error-boundary@^1.2.5:
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/react-error-boundary/-/react-error-boundary-1.2.5.tgz#a362cb799d2e58ff8f114f7c4bc25677ce4e4149"
+  integrity sha512-5CPSeLJA2igJNppAgFRwnTL9aK3ojenk65enNzhVyoxYNbHpIJXnChUO7+4vPhkncRA9wvQMXq6Azp2XeXd+iQ==
+
 react-error-overlay@^6.0.3:
   version "6.0.3"
   resolved "https://registry.yarnpkg.com/react-error-overlay/-/react-error-overlay-6.0.3.tgz#c378c4b0a21e88b2e159a3e62b2f531fd63bf60d"

@@ -7,37 +7,27 @@ import SidebarItem from "../../components/SidebarItem";
 import SidebarTitle from "../../components/SidebarTitle";
 import { fetchPokemons } from "../../api/pokeapi";
 
-function usePokemons() {
-  const [pokemons, setPokemons] = React.useState(null);
-  const [status, setStatus] = React.useState("idle");
-
-  React.useEffect(() => {
-    setStatus("loading");
-    fetchPokemons().then(
-      data => {
-        setPokemons(data);
-        setStatus("idle");
-      },
-      err => {
-        setStatus("error");
-      }
-    );
-  }, []);
-
-  return { status, pokemons };
-}
+let pokemons = null;
+let error = new Error("This failed");
+const promise = fetchPokemons().then(
+  result => {
+    pokemons = result;
+  },
+  err => {
+    error = err;
+  }
+);
 
 function PokemonList(props) {
-  const { status, pokemons } = usePokemons();
+  if (error) throw error;
+  if (!pokemons) throw promise;
 
   return (
     <Sidebar>
       <Link onClick={() => props.setSelectedPokemon(null)}>
         <SidebarTitle>Pokedex</SidebarTitle>
       </Link>
-      {status === "loading" && <Spinner />}
-      {status === "error" && <div>Error :(</div>}
-      {status === "idle" && pokemons && pokemons.length > 0 ? (
+      {pokemons && pokemons.length > 0 ? (
         pokemons.map(pokemon => (
           <Link
             key={pokemon.name}
