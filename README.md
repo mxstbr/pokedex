@@ -5,17 +5,17 @@ An example React application built in the old way. It was bootstrapped with [Cre
 ## Download the code
 
 ```sh
-git clone git@github.com:mxstbr/pokedex
+git clone https://github.com/mxstbr/pokedex
 cd pokedex
-yarn install # or npm install
+yarn install
 ```
+
+If you don't have `yarn` installed, run `npm install --global yarn` beforehand!
 
 ## Run the app locally
 
 ```sh
 yarn start
-# or
-npm start
 ```
 
 Runs the app in the development mode.<br />
