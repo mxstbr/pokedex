@@ -109,21 +109,18 @@ function usePokemon(name) {
 }
 
 function Pokemon(props) {
-  const { pokemon, status } = usePokemon(props.name);
+  const pokemon = props.resource.read();
 
   return (
     <Column width={1} p={4}>
-      {status === "loading" && <Spinner />}
-      {status === "error" && <div>Error :(</div>}
-      {status === "idle" &&
-        (pokemon ? (
-          <>
-            <PokemonProfile pokemon={pokemon} />
-            <PokemonGames pokemon={pokemon} />
-          </>
-        ) : (
-          <div>No pokemon selected.</div>
-        ))}
+      {pokemon ? (
+        <>
+          <PokemonProfile pokemon={pokemon} />
+          <PokemonGames pokemon={pokemon} />
+        </>
+      ) : (
+        <div>No pokemon selected.</div>
+      )}
     </Column>
   );
 }
