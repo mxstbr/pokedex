@@ -3,7 +3,11 @@ import React from "react";
 import { BaseStyles } from "@primer/components";
 import { Flex } from "@primer/components";
 import PokemonList from "./columns/PokemonList";
-import PokemonDetails from "./columns/PokemonDetails";
+import { Spinner } from "@nice-boys/components";
+
+const PokemonDetails = React.lazy(() =>
+  import("./columns/PokemonDetails" /* webpackChunkName: "PokemonDetails" */)
+);
 
 function App() {
   const [selectedPokemon, setSelectedPokemon] = React.useState(null);
@@ -16,7 +20,13 @@ function App() {
     <BaseStyles>
       <Flex>
         <PokemonList setSelectedPokemon={setSelectedPokemon} />
-        <PokemonDetails name={selectedPokemon} />
+        {selectedPokemon ? (
+          <React.Suspense fallback={<Spinner />}>
+            <PokemonDetails name={selectedPokemon} />
+          </React.Suspense>
+        ) : (
+          <div>No pokemon selected.</div>
+        )}
       </Flex>
     </BaseStyles>
   );
