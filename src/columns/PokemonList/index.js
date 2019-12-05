@@ -6,29 +6,16 @@ import Sidebar from "../../components/Sidebar";
 import SidebarItem from "../../components/SidebarItem";
 import SidebarTitle from "../../components/SidebarTitle";
 import { fetchPokemons } from "../../api/pokeapi";
+import useAsync from "../../use-async";
+
+const usePokemons = () => {
+  const { data, error, status } = useAsync(fetchPokemons);
+
+  return { status, error, pokemons: data };
+};
 
 const PokemonList = props => {
-  const [pokemons, setPokemons] = React.useState(null);
-  const [status, setStatus] = React.useState("idle");
-  const [error, setError] = React.useState(null);
-
-  React.useEffect(() => {
-    setStatus("loading");
-    setPokemons(null);
-    setError(null);
-    fetchPokemons().then(
-      pokemons => {
-        setStatus("idle");
-        setPokemons(pokemons);
-        setError(null);
-      },
-      err => {
-        setStatus("errored");
-        setPokemons(null);
-        setError(err);
-      }
-    );
-  }, []);
+  const { status, error, pokemons } = usePokemons();
 
   return (
     <Sidebar>

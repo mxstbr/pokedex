@@ -5,33 +5,21 @@ import PokemonProfile from "../../components/PokemonProfile";
 import PokemonGamesSection from "../../components/PokemonGamesSection";
 import Column from "../../components/Column";
 import { fetchPokemonGames, fetchPokemonByName } from "../../api/pokeapi";
+import useAsync from "../../use-async";
+
+const usePokemonGames = pokemon => {
+  const callback = React.useCallback(
+    () =>
+      fetchPokemonGames(pokemon.game_indices.map(game => game.version.name)),
+    [pokemon]
+  );
+  const { data, error, status } = useAsync(callback);
+
+  return { status, error, games: data };
+};
 
 const PokemonGames = props => {
-  const [games, setGames] = React.useState(null);
-  const [error, setError] = React.useState(null);
-  const [status, setStatus] = React.useState("idle");
-
-  React.useEffect(() => {
-    setError(null);
-    setGames(null);
-    if (!props.pokemon) return;
-
-    setStatus("loading");
-    fetchPokemonGames(
-      props.pokemon.game_indices.map(game => game.version.name)
-    ).then(
-      games => {
-        setGames(games);
-        setStatus("idle");
-        setError(null);
-      },
-      err => {
-        setGames(null);
-        setStatus("errored");
-        setError(err);
-      }
-    );
-  }, [props.pokemon]);
+  const { status, error, games } = usePokemonGames(props.pokemon);
 
   return (
     <>
@@ -43,30 +31,15 @@ const PokemonGames = props => {
   );
 };
 
+function usePokemon(name) {
+  const callback = React.useCallback(() => fetchPokemonByName(name), [name]);
+  const { data, status, error } = useAsync(callback);
+
+  return { status, error, pokemon: data };
+}
+
 const Pokemon = props => {
-  const [pokemon, setPokemon] = React.useState(null);
-  const [status, setStatus] = React.useState("idle");
-  const [error, setError] = React.useState(null);
-
-  React.useEffect(() => {
-    setPokemon(null);
-    setError(null);
-    if (!props.name) return;
-
-    setStatus("loading");
-    fetchPokemonByName(props.name).then(
-      pokemon => {
-        setStatus("idle");
-        setError(null);
-        setPokemon(pokemon);
-      },
-      err => {
-        setStatus("errored");
-        setPokemon(null);
-        setError(err);
-      }
-    );
-  }, [props.name]);
+  const { status, error, pokemon } = usePokemon(props.name);
 
   return (
     <Column width={1} p={4}>
