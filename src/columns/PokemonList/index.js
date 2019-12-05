@@ -9,11 +9,25 @@ import { fetchPokemons } from "../../api/pokeapi";
 
 const PokemonList = props => {
   const [pokemons, setPokemons] = React.useState(null);
+  const [status, setStatus] = React.useState("idle");
+  const [error, setError] = React.useState(null);
 
   React.useEffect(() => {
-    fetchPokemons().then(pokemons => {
-      setPokemons(pokemons);
-    });
+    setStatus("loading");
+    setPokemons(null);
+    setError(null);
+    fetchPokemons().then(
+      pokemons => {
+        setStatus("idle");
+        setPokemons(pokemons);
+        setError(null);
+      },
+      err => {
+        setStatus("errored");
+        setPokemons(null);
+        setError(err);
+      }
+    );
   }, []);
 
   return (
@@ -27,7 +41,7 @@ const PokemonList = props => {
         pokemons.map(pokemon => (
           <Link
             key={pokemon.name}
-            onClick={() => this.props.setSelectedPokemon(pokemon.name)}
+            onClick={() => props.setSelectedPokemon(pokemon.name)}
           >
             <SidebarItem>{pokemon.name}</SidebarItem>
           </Link>
