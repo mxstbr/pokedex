@@ -2,8 +2,30 @@ import React from "react";
 
 const reducer = (state, action) => {
   switch (action.type) {
+    case "start": {
+      return {
+        data: null,
+        error: null,
+        status: "loading"
+      };
+    }
+    case "resolved": {
+      return {
+        data: action.data,
+        error: null,
+        status: "idle"
+      };
+    }
+    case "errored": {
+      return {
+        data: null,
+        status: "errored",
+        error: action.error
+      };
+    }
+    default:
+      throw new Error(`Action ${action.type} is unhandled.`);
   }
-  return state;
 };
 
 const useAsync = fn => {
@@ -20,7 +42,7 @@ const useAsync = fn => {
     fn().then(
       data => {
         if (cancelled) return;
-        dispatch({ type: "finished", data });
+        dispatch({ type: "resolved", data });
       },
       err => {
         if (cancelled) return;
