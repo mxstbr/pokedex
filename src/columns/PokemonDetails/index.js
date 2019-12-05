@@ -31,29 +31,19 @@ const PokemonGames = props => {
   );
 };
 
-function usePokemon(name) {
-  const callback = React.useCallback(() => fetchPokemonByName(name), [name]);
-  const { data, status, error } = useAsync(callback);
-
-  return { status, error, pokemon: data };
-}
-
 const Pokemon = props => {
-  const { status, error, pokemon } = usePokemon(props.name);
+  const pokemon = props.resource.read();
 
   return (
     <Column width={1} p={4}>
-      {status === "idle" &&
-        (pokemon ? (
-          <>
-            <PokemonProfile pokemon={pokemon} />
-            <PokemonGames pokemon={pokemon} />
-          </>
-        ) : (
-          <div>No pokemon selected.</div>
-        ))}
-      {status === "loading" && <Spinner />}
-      {status === "errored" && <div>{error.message}</div>}
+      {pokemon ? (
+        <>
+          <PokemonProfile pokemon={pokemon} />
+          <PokemonGames pokemon={pokemon} />
+        </>
+      ) : (
+        <div>No pokemon selected.</div>
+      )}
     </Column>
   );
 };

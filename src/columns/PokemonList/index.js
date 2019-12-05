@@ -6,32 +6,7 @@ import Sidebar from "../../components/Sidebar";
 import SidebarItem from "../../components/SidebarItem";
 import SidebarTitle from "../../components/SidebarTitle";
 import { fetchPokemons } from "../../api/pokeapi";
-
-const createResource = promise => {
-  let status = "loading";
-  let error = null;
-  let data = null;
-
-  promise.then(
-    result => {
-      status = "complete";
-      data = result;
-    },
-    err => {
-      status = "errored";
-      error = err;
-    }
-  );
-
-  return {
-    read() {
-      if (status === "loading") throw promise;
-      if (status === "errored") throw error;
-
-      return data;
-    }
-  };
-};
+import createResource from "../../resource";
 
 const resource = createResource(fetchPokemons());
 
