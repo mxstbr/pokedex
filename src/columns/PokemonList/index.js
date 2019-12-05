@@ -7,40 +7,34 @@ import SidebarItem from "../../components/SidebarItem";
 import SidebarTitle from "../../components/SidebarTitle";
 import { fetchPokemons } from "../../api/pokeapi";
 
-class PokemonList extends React.Component {
-  state = {
-    pokemons: null
-  };
+const PokemonList = props => {
+  const [pokemons, setPokemons] = React.useState(null);
 
-  componentDidMount() {
+  React.useEffect(() => {
     fetchPokemons().then(pokemons => {
-      this.setState({
-        pokemons
-      });
+      setPokemons(pokemons);
     });
-  }
+  }, []);
 
-  render() {
-    return (
-      <Sidebar>
-        <Link onClick={() => this.props.setSelectedPokemon(null)}>
-          <SidebarTitle>Pokedex</SidebarTitle>
-        </Link>
-        {!this.state.pokemons ? (
-          <Spinner />
-        ) : (
-          this.state.pokemons.map(pokemon => (
-            <Link
-              key={pokemon.name}
-              onClick={() => this.props.setSelectedPokemon(pokemon.name)}
-            >
-              <SidebarItem>{pokemon.name}</SidebarItem>
-            </Link>
-          ))
-        )}
-      </Sidebar>
-    );
-  }
-}
+  return (
+    <Sidebar>
+      <Link onClick={() => props.setSelectedPokemon(null)}>
+        <SidebarTitle>Pokedex</SidebarTitle>
+      </Link>
+      {!pokemons ? (
+        <Spinner />
+      ) : (
+        pokemons.map(pokemon => (
+          <Link
+            key={pokemon.name}
+            onClick={() => this.props.setSelectedPokemon(pokemon.name)}
+          >
+            <SidebarItem>{pokemon.name}</SidebarItem>
+          </Link>
+        ))
+      )}
+    </Sidebar>
+  );
+};
 
 export default PokemonList;
