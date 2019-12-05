@@ -7,13 +7,36 @@ import SidebarItem from "../../components/SidebarItem";
 import SidebarTitle from "../../components/SidebarTitle";
 import { fetchPokemons } from "../../api/pokeapi";
 
-let pokemons = null;
-const promise = fetchPokemons().then(data => {
-  pokemons = data;
-});
+const createResource = promise => {
+  let status = "loading";
+  let error = null;
+  let data = null;
+
+  promise.then(
+    result => {
+      status = "complete";
+      data = result;
+    },
+    err => {
+      status = "errored";
+      error = err;
+    }
+  );
+
+  return {
+    read() {
+      if (status === "loading") throw promise;
+      if (status === "errored") throw error;
+
+      return data;
+    }
+  };
+};
+
+const resource = createResource(fetchPokemons());
 
 const PokemonList = props => {
-  if (!pokemons) throw promise;
+  const pokemons = resource.read();
 
   return (
     <Sidebar>
