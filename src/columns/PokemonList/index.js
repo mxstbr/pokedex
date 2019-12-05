@@ -6,16 +6,14 @@ import Sidebar from "../../components/Sidebar";
 import SidebarItem from "../../components/SidebarItem";
 import SidebarTitle from "../../components/SidebarTitle";
 import { fetchPokemons } from "../../api/pokeapi";
-import useAsync from "../../use-async";
 
-const usePokemons = () => {
-  const { data, error, status } = useAsync(fetchPokemons);
-
-  return { status, error, pokemons: data };
-};
+let pokemons = null;
+const promise = fetchPokemons().then(data => {
+  pokemons = data;
+});
 
 const PokemonList = props => {
-  const { status, error, pokemons } = usePokemons();
+  if (!pokemons) throw promise;
 
   return (
     <Sidebar>
