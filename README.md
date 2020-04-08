@@ -23,3 +23,9 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 The page will reload if you make edits.<br />
 You will also see any lint errors in the console.
+
+### Change the delay
+
+The API lib introduces some artificial delay to make spinners more prominent.
+
+To improve your development speed when you don't need to see spinners you can edit the `MIN_DELAY_MS` and `MAX_DELAY_MS`variables in `src/api/pokeapi.js`!
