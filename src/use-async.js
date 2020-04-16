@@ -1,13 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 const useAsync = (asyncFn, dependencies) => {
+  const callback = useCallback(asyncFn, dependencies);
+
   const [data, setData] = useState(null);
   const [state, setState] = useState("idle");
 
   useEffect(() => {
     setState("loading");
     setData(null);
-    asyncFn()
+    callback()
       .then(data => {
         setState("idle");
         setData(data);
@@ -15,8 +17,7 @@ const useAsync = (asyncFn, dependencies) => {
       .catch(err => {
         setState("error");
       });
-    // eslint-disable-next-line
-  }, dependencies);
+  }, [callback]);
 
   return [data, state];
 };
