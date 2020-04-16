@@ -20,7 +20,7 @@ const PokemonGames = props => {
   return !games ? <Spinner /> : <PokemonGamesSection games={games} />;
 };
 
-const Pokemon = props => {
+const PokemonDetails = props => {
   const [pokemonResource, setPokemonResource] = useState(null);
   useEffect(() => {
     setPokemonResource(createResource(fetchPokemonByName(props.name)));
@@ -42,4 +42,4 @@ const Pokemon = props => {
   );
 };
 
-export default Pokemon;
+export default PokemonDetails;
