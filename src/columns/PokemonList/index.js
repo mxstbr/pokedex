@@ -5,20 +5,12 @@ import Sidebar from "../../components/Sidebar";
 import SidebarItem from "../../components/SidebarItem";
 import SidebarTitle from "../../components/SidebarTitle";
 import { fetchPokemons } from "../../api/pokeapi";
+import createResource from "../../create-resource";
 
-let pokemons = null;
-let error = null;
-const promise = fetchPokemons()
-  .then(data => {
-    pokemons = data;
-  })
-  .catch(err => {
-    error = err;
-  });
+const pokemonsResource = createResource(fetchPokemons());
 
 const PokemonList = props => {
-  if (error) throw error;
-  if (!pokemons) throw promise;
+  const pokemons = pokemonsResource.read();
 
   return (
     <Sidebar>
