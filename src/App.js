@@ -5,42 +5,46 @@ import { Flex } from "@primer/components";
 import PokemonList from "./columns/PokemonList";
 import PokemonDetails from "./columns/PokemonDetails";
 
-class App extends React.Component {
-  state = {
-    selectedPokemon: null
-  };
+const App = () => {
+  const [selectedPokemon, setSelectedPokemon] = React.useState(null);
 
-  setSelectedPokemon = name => {
-    this.setState({
-      selectedPokemon: name
-    });
-  };
+  return (
+    <BaseStyles>
+      <Flex>
+        <PokemonList setSelectedPokemon={setSelectedPokemon} />
+        <PokemonDetails name={selectedPokemon} />
+      </Flex>
+    </BaseStyles>
+  );
+};
 
-  componentDidMount() {
-    this.updateDocumentTitle();
-  }
+// class App extends React.Component {
+//   state = {
+//     selectedPokemon: null
+//   };
 
-  componentDidUpdate(_, prevState) {
-    if (prevState.selectedPokemon !== this.state.selectedPokemon) {
-      this.updateDocumentTitle();
-    }
-  }
+//   setSelectedPokemon = name => {
+//     this.setState({
+//       selectedPokemon: name
+//     });
+//   };
 
-  updateDocumentTitle() {
-    const { selectedPokemon } = this.state;
-    document.title = `${selectedPokemon ? `${selectedPokemon} | ` : ""}Pokedex`;
-  }
+//   componentDidMount() {
+//     this.updateDocumentTitle();
+//   }
 
-  render() {
-    return (
-      <BaseStyles>
-        <Flex>
-          <PokemonList setSelectedPokemon={this.setSelectedPokemon} />
-          <PokemonDetails name={this.state.selectedPokemon} />
-        </Flex>
-      </BaseStyles>
-    );
-  }
-}
+//   componentDidUpdate(_, prevState) {
+//     if (prevState.selectedPokemon !== this.state.selectedPokemon) {
+//       this.updateDocumentTitle();
+//     }
+//   }
+
+//   updateDocumentTitle() {
+//     const { selectedPokemon } = this.state;
+//     document.title = `${selectedPokemon ? `${selectedPokemon} | ` : ""}Pokedex`;
+//   }
+
+//   render() {}
+// }
 
 export default App;
