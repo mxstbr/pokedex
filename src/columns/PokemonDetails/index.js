@@ -21,23 +21,12 @@ const PokemonGames = props => {
 };
 
 const PokemonDetails = props => {
-  const [pokemonResource, setPokemonResource] = useState(null);
-  useEffect(() => {
-    setPokemonResource(createResource(fetchPokemonByName(props.name)));
-  }, [props.name]);
-
-  const pokemon = pokemonResource ? pokemonResource.read() : null;
+  const pokemon = props.pokemonResource.read();
 
   return (
     <Column width={1} p={4}>
-      {!props.name ? null : !pokemon ? (
-        <Spinner />
-      ) : (
-        <>
-          <PokemonProfile pokemon={pokemon} />
-          <PokemonGames pokemon={pokemon} />
-        </>
-      )}
+      <PokemonProfile pokemon={pokemon} />
+      <PokemonGames pokemon={pokemon} />
     </Column>
   );
 };

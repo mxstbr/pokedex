@@ -5,17 +5,20 @@ import { Flex } from "@primer/components";
 import { Spinner } from "@nice-boys/components";
 import ErrorBoundary from "react-error-boundary";
 import PokemonList from "./columns/PokemonList";
+import createResource from "./create-resource";
+import { fetchPokemonByName } from "./api/pokeapi";
 
 const PokemonDetails = React.lazy(() =>
   import("./columns/PokemonDetails" /* webpackChunkName: "PokemonDetails" */)
 );
 
 const App = () => {
-  const [selectedPokemon, setSelectedPokemon] = React.useState(null);
+  const [pokemonResource, setPokemonResource] = React.useState(null);
 
-  useEffect(() => {
-    document.title = `${selectedPokemon ? `${selectedPokemon} | ` : ""}Pokedex`;
-  });
+  const setSelectedPokemon = name => {
+    document.title = `${name ? `${name} | ` : ""}Pokedex`;
+    setPokemonResource(createResource(fetchPokemonByName(name)));
+  };
 
   return (
     <BaseStyles>
@@ -25,9 +28,9 @@ const App = () => {
             <PokemonList setSelectedPokemon={setSelectedPokemon} />
           </React.Suspense>
         </ErrorBoundary>
-        {selectedPokemon && (
+        {pokemonResource && (
           <React.Suspense fallback={<Spinner />}>
-            <PokemonDetails name={selectedPokemon} />
+            <PokemonDetails pokemonResource={pokemonResource} />
           </React.Suspense>
         )}
       </Flex>
