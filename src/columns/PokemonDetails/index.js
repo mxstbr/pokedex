@@ -6,36 +6,48 @@ import PokemonGamesSection from "../../components/PokemonGamesSection";
 import Column from "../../components/Column";
 import { fetchPokemonGames, fetchPokemonByName } from "../../api/pokeapi";
 
-const PokemonGames = props => {
+function usePokemonGames(pokemon) {
   const [games, setGames] = React.useState(null);
 
   React.useEffect(() => {
     setGames(null);
 
-    if (!props.pokemon) return;
+    if (!pokemon) return;
 
-    fetchPokemonGames(
-      props.pokemon.game_indices.map(game => game.version.name)
-    ).then(games => {
-      setGames(games);
-    });
-  }, [props.pokemon]);
+    fetchPokemonGames(pokemon.game_indices.map(game => game.version.name)).then(
+      games => {
+        setGames(games);
+      }
+    );
+  }, [pokemon]);
+
+  return games;
+}
+
+const PokemonGames = props => {
+  const games = usePokemonGames(props.pokemon);
 
   return !games ? <Spinner /> : <PokemonGamesSection games={games} />;
 };
 
-const Pokemon = props => {
+function usePokemon(name) {
   const [pokemon, setPokemon] = React.useState(null);
 
   React.useEffect(() => {
     setPokemon(null);
 
-    if (!props.name) return;
+    if (!name) return;
 
-    fetchPokemonByName(props.name).then(pokemon => {
+    fetchPokemonByName(name).then(pokemon => {
       setPokemon(pokemon);
     });
-  }, [props.name]);
+  }, [name]);
+
+  return pokemon;
+}
+
+const Pokemon = props => {
+  const pokemon = usePokemon(props.name);
 
   return (
     <Column width={1} p={4}>

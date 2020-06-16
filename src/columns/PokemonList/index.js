@@ -7,7 +7,7 @@ import SidebarItem from "../../components/SidebarItem";
 import SidebarTitle from "../../components/SidebarTitle";
 import { fetchPokemons } from "../../api/pokeapi";
 
-const PokemonList = props => {
+function usePokemons() {
   const [pokemons, setPokemons] = React.useState(null);
   const [error, setError] = React.useState(null);
   const [status, setStatus] = React.useState("loading");
@@ -24,6 +24,12 @@ const PokemonList = props => {
         setError(err.message);
       });
   }, []);
+
+  return { pokemons, status, error };
+}
+
+const PokemonList = props => {
+  const { pokemons, status, error } = usePokemons();
 
   return (
     <Sidebar>
