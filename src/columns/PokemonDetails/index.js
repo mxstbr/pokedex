@@ -5,49 +5,27 @@ import PokemonProfile from "../../components/PokemonProfile";
 import PokemonGamesSection from "../../components/PokemonGamesSection";
 import Column from "../../components/Column";
 import { fetchPokemonGames, fetchPokemonByName } from "../../api/pokeapi";
-
-function usePokemonGames(pokemon) {
-  const [games, setGames] = React.useState(null);
-
-  React.useEffect(() => {
-    setGames(null);
-
-    if (!pokemon) return;
-
-    fetchPokemonGames(pokemon.game_indices.map(game => game.version.name)).then(
-      games => {
-        setGames(games);
-      }
-    );
-  }, [pokemon]);
-
-  return games;
-}
+import useAsync from "../../hooks/use-async";
 
 const PokemonGames = props => {
-  const games = usePokemonGames(props.pokemon);
+  const fetchGames = React.useCallback(
+    () =>
+      fetchPokemonGames(
+        props.pokemon.game_indices.map(game => game.version.name)
+      ),
+    [props.pokemon]
+  );
+  const [games] = useAsync(fetchGames);
 
   return !games ? <Spinner /> : <PokemonGamesSection games={games} />;
 };
 
-function usePokemon(name) {
-  const [pokemon, setPokemon] = React.useState(null);
-
-  React.useEffect(() => {
-    setPokemon(null);
-
-    if (!name) return;
-
-    fetchPokemonByName(name).then(pokemon => {
-      setPokemon(pokemon);
-    });
-  }, [name]);
-
-  return pokemon;
-}
-
 const Pokemon = props => {
-  const pokemon = usePokemon(props.name);
+  const fetchPokemon = React.useCallback(() => {
+    return fetchPokemonByName(props.name);
+  }, [props.name]);
+
+  const [pokemon, { status, error }] = useAsync(fetchPokemon);
 
   return (
     <Column width={1} p={4}>
