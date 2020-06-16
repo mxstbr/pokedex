@@ -7,40 +7,46 @@ import SidebarItem from "../../components/SidebarItem";
 import SidebarTitle from "../../components/SidebarTitle";
 import { fetchPokemons } from "../../api/pokeapi";
 
-class PokemonList extends React.Component {
-  state = {
-    pokemons: null
-  };
+const PokemonList = props => {
+  const [pokemons, setPokemons] = React.useState(null);
+  const [error, setError] = React.useState(null);
+  const [status, setStatus] = React.useState("loading");
 
-  componentDidMount() {
-    fetchPokemons().then(pokemons => {
-      this.setState({
-        pokemons
+  React.useEffect(() => {
+    setStatus("loading");
+    fetchPokemons()
+      .then(pokemons => {
+        setStatus("idle");
+        setPokemons(pokemons);
+      })
+      .catch(err => {
+        setStatus("error");
+        setError(err.message);
       });
-    });
-  }
+  }, []);
 
-  render() {
-    return (
-      <Sidebar>
-        <Link onClick={() => this.props.setSelectedPokemon(null)}>
-          <SidebarTitle>Pokedex</SidebarTitle>
-        </Link>
-        {!this.state.pokemons ? (
-          <Spinner />
+  return (
+    <Sidebar>
+      <Link onClick={() => props.setSelectedPokemon(null)}>
+        <SidebarTitle>Pokedex</SidebarTitle>
+      </Link>
+      {status === "error" && <div>{error}</div>}
+      {status === "loading" && <Spinner />}
+      {status === "idle" &&
+        (!pokemons ? (
+          <div>No pokemons</div>
         ) : (
-          this.state.pokemons.map(pokemon => (
+          pokemons.map(pokemon => (
             <Link
               key={pokemon.name}
-              onClick={() => this.props.setSelectedPokemon(pokemon.name)}
+              onClick={() => props.setSelectedPokemon(pokemon.name)}
             >
               <SidebarItem>{pokemon.name}</SidebarItem>
             </Link>
           ))
-        )}
-      </Sidebar>
-    );
-  }
-}
+        ))}
+    </Sidebar>
+  );
+};
 
 export default PokemonList;
