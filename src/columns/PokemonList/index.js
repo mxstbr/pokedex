@@ -5,29 +5,7 @@ import Sidebar from "../../components/Sidebar";
 import SidebarItem from "../../components/SidebarItem";
 import SidebarTitle from "../../components/SidebarTitle";
 import { fetchPokemons } from "../../api/pokeapi";
-
-const createResource = promise => {
-  let data = null;
-  let error = null;
-
-  promise
-    .then(result => {
-      data = result;
-    })
-    .catch(err => {
-      error = err;
-    });
-
-  return {
-    read() {
-      if (data) return data;
-
-      if (error) throw error;
-
-      throw promise;
-    }
-  };
-};
+import createResource from "../../create-resource";
 
 const resource = createResource(fetchPokemons());
 
