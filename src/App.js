@@ -4,6 +4,7 @@ import { BaseStyles } from "@primer/components";
 import { Flex } from "@primer/components";
 import PokemonList from "./columns/PokemonList";
 import { Spinner } from "@nice-boys/components";
+import { ErrorBoundary } from "react-error-boundary";
 
 const PokemonDetails = React.lazy(() =>
   import("./columns/PokemonDetails" /* webpackChunkName: "PokemonDetails" */)
@@ -19,11 +20,17 @@ const App = () => {
   return (
     <BaseStyles>
       <Flex>
-        <PokemonList setSelectedPokemon={setSelectedPokemon} />
-        {selectedPokemon && (
+        <ErrorBoundary FallbackComponent={() => <div>Error :(</div>}>
           <React.Suspense fallback={<Spinner />}>
-            <PokemonDetails name={selectedPokemon} />
+            <PokemonList setSelectedPokemon={setSelectedPokemon} />
           </React.Suspense>
+        </ErrorBoundary>
+        {selectedPokemon && (
+          <ErrorBoundary FallbackComponent={() => <div>Error :(</div>}>
+            <React.Suspense fallback={<Spinner />}>
+              <PokemonDetails name={selectedPokemon} />
+            </React.Suspense>
+          </ErrorBoundary>
         )}
       </Flex>
     </BaseStyles>
