@@ -6,13 +6,33 @@ import SidebarItem from "../../components/SidebarItem";
 import SidebarTitle from "../../components/SidebarTitle";
 import { fetchPokemons } from "../../api/pokeapi";
 
-let data = null;
-const promise = fetchPokemons().then(result => {
-  data = result;
-});
+const createResource = promise => {
+  let data = null;
+  let error = null;
+
+  promise
+    .then(result => {
+      data = result;
+    })
+    .catch(err => {
+      error = err;
+    });
+
+  return {
+    read() {
+      if (data) return data;
+
+      if (error) throw error;
+
+      throw promise;
+    }
+  };
+};
+
+const resource = createResource(fetchPokemons());
 
 const PokemonList = props => {
-  if (!data) throw promise;
+  const data = resource.read();
 
   return (
     <Sidebar>
