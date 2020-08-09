@@ -2,42 +2,16 @@
 import React from "react";
 import { BaseStyles } from "@primer/components";
 import { Flex } from "@primer/components";
-import PokemonList from "./columns/PokemonList";
+import PokemonList, { createResource } from "./columns/PokemonList";
 import { Spinner } from "@nice-boys/components";
-import ErrorBoundary from "react-error-boundary";
-import { fetchPokemonByName } from "./api/pokeapi";
+import { ErrorBoundary } from "react-error-boundary";
 
 const PokemonDetails = React.lazy(() =>
   import("./columns/PokemonDetails" /* webpackChunkName: "PokemonDetails" */)
 );
 
-const createResource = promise => {
-  let status = "loading";
-  let data = null;
-  let error = null;
-
-  promise.then(
-    result => {
-      status = "complete";
-      data = result;
-    },
-    err => {
-      status = "errored";
-      error = err;
-    }
-  );
-
-  return {
-    read() {
-      if (status === "complete") return data;
-      if (status === "errored") throw error;
-      throw promise;
-    }
-  };
-};
-
 function App() {
-  const [selectedPokemon, setStateSelectedPokemon] = React.useState(null);
+  const [selectedPokemon, setSelectedPokemon] = React.useState(null);
   const [pokemonResource, setPokemonResource] = React.useState(
     createResource(Promise.resolve(null))
   );
@@ -46,22 +20,20 @@ function App() {
     document.title = `${selectedPokemon ? `${selectedPokemon} | ` : ""}Pokedex`;
   });
 
-  const setSelectedPokemon = name => {
-    setStateSelectedPokemon(name);
-    setPokemonResource(createResource(fetchPokemonByName(name)));
-  };
-
   return (
     <BaseStyles>
       <Flex>
-        <React.Suspense fallback={<Spinner></Spinner>}>
+        <React.Suspense fallback={<Spinner />}>
           <ErrorBoundary FallbackComponent={() => <div>Error :(</div>}>
-            <PokemonList setSelectedPokemon={setSelectedPokemon} />
+            <PokemonList
+              setPokemonResource={setPokemonResource}
+              setSelectedPokemon={setSelectedPokemon}
+            />
           </ErrorBoundary>
         </React.Suspense>
         {selectedPokemon ? (
           <React.Suspense fallback={<Spinner />}>
-            <PokemonDetails resource={pokemonResource} />
+            <PokemonDetails resource={pokemonResource} name={selectedPokemon} />
           </React.Suspense>
         ) : (
           <div>No pokemon selected.</div>

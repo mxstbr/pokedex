@@ -5,9 +5,9 @@ import Sidebar from "../../components/Sidebar";
 import LoadingEllipsis from "../../components/LoadingEllipsis";
 import SidebarItem from "../../components/SidebarItem";
 import SidebarTitle from "../../components/SidebarTitle";
-import { fetchPokemons } from "../../api/pokeapi";
+import { fetchPokemons, fetchPokemonByName } from "../../api/pokeapi";
 
-const createResource = promise => {
+export const createResource = promise => {
   let status = "loading";
   let data = null;
   let error = null;
@@ -32,13 +32,25 @@ const createResource = promise => {
   };
 };
 
-const PokemonSidebarItem = ({ pokemon, onClick }) => {
+const PokemonSidebarItem = ({
+  pokemon,
+  setPokemonResource,
+  setSelectedPokemon,
+  onClick
+}) => {
   const [startTransition, isPending] = React.useTransition({
     timeoutMs: 3000
   });
 
   return (
-    <Link key={pokemon.name} onClick={() => startTransition(() => onClick())}>
+    <Link
+      onClick={() =>
+        startTransition(() => {
+          setSelectedPokemon(pokemon.name);
+          setPokemonResource(createResource(fetchPokemonByName(pokemon.name)));
+        })
+      }
+    >
       <SidebarItem>
         {pokemon.name}
         {isPending && <LoadingEllipsis />}
@@ -62,7 +74,8 @@ function PokemonList(props) {
           <PokemonSidebarItem
             pokemon={pokemon}
             key={pokemon.name}
-            onClick={() => props.setSelectedPokemon(pokemon.name)}
+            setPokemonResource={props.setPokemonResource}
+            setSelectedPokemon={props.setSelectedPokemon}
           ></PokemonSidebarItem>
         ))
       ) : (
