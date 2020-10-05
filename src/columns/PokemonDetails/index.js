@@ -5,6 +5,7 @@ import PokemonProfile from "../../components/PokemonProfile";
 import PokemonGamesSection from "../../components/PokemonGamesSection";
 import Column from "../../components/Column";
 import { fetchPokemonGames, fetchPokemonByName } from "../../api/pokeapi";
+import useAsync from "../../use-async";
 
 class PokemonGames extends React.Component {
   state = {
@@ -48,35 +49,20 @@ class PokemonGames extends React.Component {
   }
 }
 
-function usePokemon(name) {
-  const [status, setStatus] = React.useState("idle");
-  const [pokemon, setPokemon] = React.useState(null);
-
-  React.useEffect(() => {
-    setPokemon(null);
-
-    if (!name) return;
-    setStatus("loading");
-    fetchPokemonByName(name).then(pokemon => {
-      setStatus("idle");
-      setPokemon(pokemon);
-    });
-  }, [name]);
-
-  return { status, pokemon };
-}
-
 function Pokemon(props) {
-  const { status, pokemon } = usePokemon(props.name);
+  const fetchPokemon = React.useCallback(() => fetchPokemonByName(props.name), [
+    props.name
+  ]);
+  const { status, data } = useAsync(fetchPokemon);
 
   return (
     <Column width={1} p={4}>
       {status === "loading" && <Spinner />}
       {status === "idle" &&
-        (pokemon ? (
+        (data ? (
           <>
-            <PokemonProfile pokemon={pokemon} />
-            <PokemonGames pokemon={pokemon} />
+            <PokemonProfile pokemon={data} />
+            <PokemonGames pokemon={data} />
           </>
         ) : (
           <div>No pokemon selected</div>

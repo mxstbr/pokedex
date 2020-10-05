@@ -6,35 +6,10 @@ import Sidebar from "../../components/Sidebar";
 import SidebarItem from "../../components/SidebarItem";
 import SidebarTitle from "../../components/SidebarTitle";
 import { fetchPokemons } from "../../api/pokeapi";
-
-function usePokemons() {
-  const [pokemons, setPokemons] = React.useState(null);
-  const [status, setStatus] = React.useState("idle");
-  const [error, setError] = React.useState(null);
-
-  React.useEffect(() => {
-    setStatus("loading");
-    setError(null);
-    setPokemons(null);
-
-    fetchPokemons()
-      .then(pokemons => {
-        setStatus("idle");
-        setError(null);
-        setPokemons(pokemons);
-      })
-      .catch(err => {
-        setStatus("error");
-        setError(err);
-        setPokemons(null);
-      });
-  }, []);
-
-  return { status, error, pokemons };
-}
+import useAsync from "../../use-async";
 
 function PokemonList(props) {
-  const { status, error, pokemons } = usePokemons();
+  const { status, error, data } = useAsync(fetchPokemons);
 
   return (
     <Sidebar>
@@ -44,8 +19,8 @@ function PokemonList(props) {
       {status === "loading" && <Spinner />}
       {status === "error" && <div>{error.message}</div>}
       {status === "idle" &&
-        (pokemons ? (
-          pokemons.map(pokemon => (
+        (data ? (
+          data.map(pokemon => (
             <Link
               key={pokemon.name}
               onClick={() => props.setSelectedPokemon(pokemon.name)}
