@@ -49,27 +49,32 @@ class PokemonGames extends React.Component {
 }
 
 function Pokemon(props) {
+  const [status, setStatus] = React.useState("idle");
   const [pokemon, setPokemon] = React.useState(null);
 
   React.useEffect(() => {
     setPokemon(null);
 
     if (!props.name) return;
+    setStatus("loading");
     fetchPokemonByName(props.name).then(pokemon => {
+      setStatus("idle");
       setPokemon(pokemon);
     });
   }, [props.name]);
 
   return (
     <Column width={1} p={4}>
-      {!props.name ? null : !pokemon ? (
-        <Spinner />
-      ) : (
-        <>
-          <PokemonProfile pokemon={pokemon} />
-          <PokemonGames pokemon={pokemon} />
-        </>
-      )}
+      {status === "loading" && <Spinner />}
+      {status === "idle" &&
+        (pokemon ? (
+          <>
+            <PokemonProfile pokemon={pokemon} />
+            <PokemonGames pokemon={pokemon} />
+          </>
+        ) : (
+          <div>No pokemon selected</div>
+        ))}
     </Column>
   );
 }
