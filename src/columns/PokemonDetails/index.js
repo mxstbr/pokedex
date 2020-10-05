@@ -48,20 +48,26 @@ class PokemonGames extends React.Component {
   }
 }
 
-function Pokemon(props) {
+function usePokemon(name) {
   const [status, setStatus] = React.useState("idle");
   const [pokemon, setPokemon] = React.useState(null);
 
   React.useEffect(() => {
     setPokemon(null);
 
-    if (!props.name) return;
+    if (!name) return;
     setStatus("loading");
-    fetchPokemonByName(props.name).then(pokemon => {
+    fetchPokemonByName(name).then(pokemon => {
       setStatus("idle");
       setPokemon(pokemon);
     });
-  }, [props.name]);
+  }, [name]);
+
+  return { status, pokemon };
+}
+
+function Pokemon(props) {
+  const { status, pokemon } = usePokemon(props.name);
 
   return (
     <Column width={1} p={4}>
