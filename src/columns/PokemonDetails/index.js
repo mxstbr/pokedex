@@ -48,48 +48,30 @@ class PokemonGames extends React.Component {
   }
 }
 
-class Pokemon extends React.Component {
-  state = {
-    pokemon: null
-  };
+function Pokemon(props) {
+  const [pokemon, setPokemon] = React.useState(null);
 
-  componentDidMount() {
-    this.fetchPokemon();
-  }
+  React.useEffect(() => {
+    setPokemon(null);
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.name !== this.props.name) {
-      this.fetchPokemon();
-    }
-  }
-
-  fetchPokemon() {
-    this.setState({
-      pokemon: null
+    if (!props.name) return;
+    fetchPokemonByName(props.name).then(pokemon => {
+      setPokemon(pokemon);
     });
+  }, [props.name]);
 
-    if (!this.props.name) return;
-    fetchPokemonByName(this.props.name).then(pokemon => {
-      this.setState({
-        pokemon
-      });
-    });
-  }
-
-  render() {
-    return (
-      <Column width={1} p={4}>
-        {!this.props.name ? null : !this.state.pokemon ? (
-          <Spinner />
-        ) : (
-          <>
-            <PokemonProfile pokemon={this.state.pokemon} />
-            <PokemonGames pokemon={this.state.pokemon} />
-          </>
-        )}
-      </Column>
-    );
-  }
+  return (
+    <Column width={1} p={4}>
+      {!props.name ? null : !pokemon ? (
+        <Spinner />
+      ) : (
+        <>
+          <PokemonProfile pokemon={pokemon} />
+          <PokemonGames pokemon={pokemon} />
+        </>
+      )}
+    </Column>
+  );
 }
 
 export default Pokemon;
