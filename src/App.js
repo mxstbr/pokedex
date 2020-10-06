@@ -2,6 +2,7 @@
 import React from "react";
 import { BaseStyles } from "@primer/components";
 import { Flex } from "@primer/components";
+import { ErrorBoundary } from "react-error-boundary";
 import PokemonList from "./columns/PokemonList";
 import PokemonDetails from "./columns/PokemonDetails";
 
@@ -15,8 +16,12 @@ function App() {
   return (
     <BaseStyles>
       <Flex>
-        <PokemonList setSelectedPokemon={setSelectedPokemon} />
-        <PokemonDetails name={selectedPokemon} />
+        <ErrorBoundary fallbackRender={({ error }) => <p>{error.message}</p>}>
+          <PokemonList setSelectedPokemon={setSelectedPokemon} />
+        </ErrorBoundary>
+        <ErrorBoundary fallbackRender={({ error }) => <p>{error.message}</p>}>
+          <PokemonDetails name={selectedPokemon} />
+        </ErrorBoundary>
       </Flex>
     </BaseStyles>
   );
