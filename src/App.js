@@ -17,10 +17,13 @@ function App() {
   const [selectedPokemonResource, setSelectedPokemonResource] = React.useState(
     null
   );
+  const [selectedPokemonName, setSelectedPokemonName] = React.useState(null);
 
-  // React.useEffect(() => {
-  //   document.title = `${selectedPokemon ? `${selectedPokemon} | ` : ""}Pokedex`;
-  // }, [selectedPokemon]);
+  React.useEffect(() => {
+    document.title = `${
+      selectedPokemonName ? `${selectedPokemonName} | ` : ""
+    }Pokedex`;
+  }, [selectedPokemonName]);
 
   return (
     <BaseStyles>
@@ -31,6 +34,7 @@ function App() {
               setSelectedPokemon={name => {
                 const resource = createResource(fetchPokemonByName(name));
                 setSelectedPokemonResource(resource);
+                setSelectedPokemonName(name);
               }}
             />
           </React.Suspense>
