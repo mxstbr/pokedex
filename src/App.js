@@ -22,7 +22,9 @@ function App() {
     <BaseStyles>
       <Flex>
         <ErrorBoundary fallbackRender={({ error }) => <p>{error.message}</p>}>
-          <PokemonList setSelectedPokemon={setSelectedPokemon} />
+          <React.Suspense fallback={<Spinner />}>
+            <PokemonList setSelectedPokemon={setSelectedPokemon} />
+          </React.Suspense>
         </ErrorBoundary>
         {selectedPokemon ? (
           <ErrorBoundary fallbackRender={({ error }) => <p>{error.message}</p>}>
