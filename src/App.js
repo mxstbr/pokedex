@@ -2,9 +2,14 @@
 import React from "react";
 import { BaseStyles } from "@primer/components";
 import { Flex } from "@primer/components";
+import { Spinner } from "@nice-boys/components";
 import { ErrorBoundary } from "react-error-boundary";
 import PokemonList from "./columns/PokemonList";
-import PokemonDetails from "./columns/PokemonDetails";
+// import PokemonDetails from "./columns/PokemonDetails";
+
+const AsyncLoadPokemonDetails = React.lazy(() =>
+  import(`./columns/PokemonDetails` /* webpackChunkName: "PokemonDetails" */)
+);
 
 function App() {
   const [selectedPokemon, setSelectedPokemon] = React.useState(null);
@@ -19,9 +24,15 @@ function App() {
         <ErrorBoundary fallbackRender={({ error }) => <p>{error.message}</p>}>
           <PokemonList setSelectedPokemon={setSelectedPokemon} />
         </ErrorBoundary>
-        <ErrorBoundary fallbackRender={({ error }) => <p>{error.message}</p>}>
-          <PokemonDetails name={selectedPokemon} />
-        </ErrorBoundary>
+        {selectedPokemon ? (
+          <ErrorBoundary fallbackRender={({ error }) => <p>{error.message}</p>}>
+            <React.Suspense fallback={<Spinner />}>
+              <AsyncLoadPokemonDetails name={selectedPokemon} />
+            </React.Suspense>
+          </ErrorBoundary>
+        ) : (
+          <p>No selected pokemon.</p>
+        )}
       </Flex>
     </BaseStyles>
   );
