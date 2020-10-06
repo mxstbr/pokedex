@@ -6,13 +6,24 @@ import SidebarItem from "../../components/SidebarItem";
 import SidebarTitle from "../../components/SidebarTitle";
 import { fetchPokemons } from "../../api/pokeapi";
 
+let status = "loading";
 let data = null;
-const promise = fetchPokemons().then(result => {
-  data = result;
-});
+let error = null;
+const promise = fetchPokemons()
+  .then(result => {
+    status = "idle";
+    data = result;
+  })
+  .catch(err => {
+    status = "error";
+    error = err;
+  });
 
 function PokemonList(props) {
-  if (!data) throw promise;
+  if (status === "loading") throw promise;
+  if (status === "error") throw error;
+
+  if (!data) return <p>No pokemons.</p>;
 
   return (
     <Sidebar>
