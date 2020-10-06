@@ -50,23 +50,18 @@ class PokemonGames extends React.Component {
 }
 
 function Pokemon(props) {
-  const fetchPokemon = React.useCallback(() => fetchPokemonByName(props.name), [
-    props.name
-  ]);
-  const { status, data } = useAsync(fetchPokemon);
+  const data = props.resource.read();
 
   return (
     <Column width={1} p={4}>
-      {status === "loading" && <Spinner />}
-      {status === "idle" &&
-        (data ? (
-          <>
-            <PokemonProfile pokemon={data} />
-            <PokemonGames pokemon={data} />
-          </>
-        ) : (
-          <div>No pokemon selected</div>
-        ))}
+      {data ? (
+        <>
+          <PokemonProfile pokemon={data} />
+          <PokemonGames pokemon={data} />
+        </>
+      ) : (
+        <div>No pokemon selected</div>
+      )}
     </Column>
   );
 }

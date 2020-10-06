@@ -5,6 +5,8 @@ import { Flex } from "@primer/components";
 import { Spinner } from "@nice-boys/components";
 import { ErrorBoundary } from "react-error-boundary";
 import PokemonList from "./columns/PokemonList";
+import createResource from "./create-resource";
+import { fetchPokemonByName } from "./api/pokeapi";
 // import PokemonDetails from "./columns/PokemonDetails";
 
 const AsyncLoadPokemonDetails = React.lazy(() =>
@@ -12,24 +14,31 @@ const AsyncLoadPokemonDetails = React.lazy(() =>
 );
 
 function App() {
-  const [selectedPokemon, setSelectedPokemon] = React.useState(null);
+  const [selectedPokemonResource, setSelectedPokemonResource] = React.useState(
+    null
+  );
 
-  React.useEffect(() => {
-    document.title = `${selectedPokemon ? `${selectedPokemon} | ` : ""}Pokedex`;
-  }, [selectedPokemon]);
+  // React.useEffect(() => {
+  //   document.title = `${selectedPokemon ? `${selectedPokemon} | ` : ""}Pokedex`;
+  // }, [selectedPokemon]);
 
   return (
     <BaseStyles>
       <Flex>
         <ErrorBoundary fallbackRender={({ error }) => <p>{error.message}</p>}>
           <React.Suspense fallback={<Spinner />}>
-            <PokemonList setSelectedPokemon={setSelectedPokemon} />
+            <PokemonList
+              setSelectedPokemon={name => {
+                const resource = createResource(fetchPokemonByName(name));
+                setSelectedPokemonResource(resource);
+              }}
+            />
           </React.Suspense>
         </ErrorBoundary>
-        {selectedPokemon ? (
+        {selectedPokemonResource ? (
           <ErrorBoundary fallbackRender={({ error }) => <p>{error.message}</p>}>
             <React.Suspense fallback={<Spinner />}>
-              <AsyncLoadPokemonDetails name={selectedPokemon} />
+              <AsyncLoadPokemonDetails resource={selectedPokemonResource} />
             </React.Suspense>
           </ErrorBoundary>
         ) : (
